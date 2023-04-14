@@ -1,0 +1,30 @@
+.search{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 66px;
+    .search-flag{
+        display: flex;
+        align-items: center;
+        gap: 31px;
+        background: #2B3844;
+        width: 480px;
+        padding: 10px 32px;
+        color: #fff;
+        border-radius: 5px;
+
+    }
+
+
+    .parent{
+        display: flex;
+        gap: 48px;
+        // width: 200px;
+        // height: 58px;
+        padding: 18px 24px;
+        background:#2B3844;
+        border-radius: 5px;
+        font-weight: 400;
+        font-size: 14px;
+
+    }
+}

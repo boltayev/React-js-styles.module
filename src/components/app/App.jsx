@@ -5,30 +5,74 @@ import Wrapper from "../wrapper/Wrapper";
 import Search from "../search/Search";
 import CountryCard from "../countryCard/CountryCard";
 
-import flagGr from '../images/Germany.png'
-import flagUsa from '../images/America.png'
-import flagBr from '../images/brazil.png'
-import flagEuro from '../images/europe.png'
-import flagAzia from '../images/azia.png'
-import flagEuro2 from '../images/europe.png'
-import flagAlbaniy from '../images/albaniya.png'
-import flagAfrica from '../images/africa.png'
+import getInfo from "../resource/Server";
+
+// import flagGr from '../images/Germany.png'
+// import flagUsa from '../images/America.png'
+// import flagBr from '../images/brazil.png'
+// import flagEuro from '../images/europe.png'
+// import flagAzia from '../images/azia.png'
+// import flagEuro2 from '../images/europe.png'
+// import flagAlbaniy from '../images/albaniya.png'
+// import flagAfrica from '../images/africa.png'
 
 class App extends Component{
+
+   constructor(props){
+      super(props)
+   }
+   state ={
+      data:[],
+      name: ""
+   };
+
+   componentDidMount(){
+      getInfo("https://restcountries.com/v3.1/all?fields=name,population,region,capital,flags")
+      .then((res)=>{
+         this.setState(()=>{
+            return{
+               data:res,
+            };
+      })
+      })
+   }
+
+   getName = (arg) => {
+		this.setState(() => {
+			return {
+				name: arg
+			}
+		})
+	}
+
+
     render(){
+
+      		let api = this.state.data.filter(item => {
+			return item.name.common.includes(this.state.name)
+		})
+
+
+
         return(
             <div>
                 <Wrapper></Wrapper>
-                <Search></Search>
+                <Search getName={this.getName}></Search>
                 <div className={styles.container}>
-                    <CountryCard
-                    country={"Germany"}
-                    flagImg={flagGr}
-                    population={"81.770.900"}
-                    region={'Evropa'}
-                    capital={"Berlin"} 
-                 />
-                 <CountryCard
+                  {api.map((item,id) =>{
+                     let{flags,name,population,region,capital}=item
+                     return(
+                        <CountryCard
+                           country={item.name.official}
+                           flagImg={item.flags.png}
+                           population={item.population}
+                           region={item.region}
+                           capital={item.capital} 
+                  />
+                     )
+                  })}
+                    
+                 {/* <CountryCard
                     country={"United States of America"}
                     flagImg={flagUsa}
                     population={"323.947.000"}
@@ -77,7 +121,7 @@ class App extends Component{
                     population={"400,300.982"}
                     capital={"Berlin"} 
                     region={'Africa'}
-                 />
+                 /> */}
                 </div>
             </div>
         )

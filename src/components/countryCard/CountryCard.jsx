@@ -3,7 +3,13 @@ import styles from './CountryCard.module.scss'
 
 
 class CountryCard extends Component{
+
+    constructor(props){
+        super(props)
+    }
+
     render(){
+        let {flagImg,country,population,region,capital}=this.props
         return(
             <div className={styles.country}>
                 <img src={this.props.flagImg} alt="flag"/>

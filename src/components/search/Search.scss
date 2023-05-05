@@ -6,11 +6,28 @@
         display: flex;
         align-items: center;
         gap: 31px;
-        background: #2B3844;
-        width: 480px;
-        padding: 10px 32px;
+        // background: #2B3844;
+        // width: 480px;
+        padding: 10px 0px;
         color: #fff;
         border-radius: 5px;
+
+        .image{
+            position: absolute;
+            left: 14%;
+            // top: 10%;
+        }
+
+        .inp{
+            width: 500px;
+            height: 56px;
+            background:#2B3844;
+            padding: 0px 80px;
+            color: #fff;
+            border: 0;
+            box-shadow: 0px 2px 9px rgba(0, 0, 0, 0.0532439);
+            border-radius: 5px;
+        }
 
     }
 
